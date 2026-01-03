@@ -1,0 +1,70 @@
+# destinyoo.com Nmap Lab
+version: '3'
+
+services:
+  target-ubuntu:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.ubuntu
+    container_name: target-ubuntu
+    networks:
+      nmap_lab_net:
+        ipv4_address: 172.20.100.10
+    restart: always
+
+  target-alpine:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.alpine
+    container_name: target-alpine
+    networks:
+      nmap_lab_net:
+        ipv4_address: 172.20.100.25
+    restart: always
+
+  target-rocky:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.rocky
+    container_name: target-rocky
+    networks:
+      nmap_lab_net:
+        ipv4_address: 172.20.100.33
+    restart: always
+
+  target-debian:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.debian
+    container_name: target-debian
+    networks:
+      nmap_lab_net:
+        ipv4_address: 172.20.100.42
+    restart: always
+
+  target-udp:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.udp
+    container_name: target-udp
+    networks:
+      nmap_lab_net:
+        ipv4_address: 172.20.100.55
+    restart: always
+
+  target-misc:
+    image: nginx:alpine
+    container_name: target-misc
+    networks:
+      nmap_lab_net:
+        ipv4_address: 172.20.100.68
+    ports:
+      - "8080:80"
+    restart: always
+
+networks:
+  nmap_lab_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.100.0/24

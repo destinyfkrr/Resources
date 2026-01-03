@@ -1,0 +1,18 @@
+FROM alpine:latest
+
+RUN apk add --no-cache vsftpd openrc openssh
+
+# Configure VSFTPD
+RUN echo "local_enable=YES" >> /etc/vsftpd/vsftpd.conf && \
+    echo "write_enable=YES" >> /etc/vsftpd/vsftpd.conf && \
+    echo "anonymous_enable=YES" >> /etc/vsftpd/vsftpd.conf
+
+# Configure SSH (optional, just to have another service)
+RUN ssh-keygen -A
+
+# Create a user for ftp
+RUN adduser -D ftpuser && echo "ftpuser:ftppass" | chpasswd
+
+EXPOSE 21 22
+
+CMD ["/bin/sh", "-c", "/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf & /usr/sbin/sshd -D"]

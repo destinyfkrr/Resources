@@ -1,0 +1,11 @@
+FROM rockylinux:9
+
+RUN dnf -y install openssh-server && \
+    dnf clean all
+
+RUN ssh-keygen -A
+RUN echo 'root:rocky' | chpasswd
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D"]

@@ -1,0 +1,15 @@
+FROM debian:12
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    nginx \
+    socat \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN echo "Welcome to Debian Nginx - destinyoo.com" > /var/www/html/index.html
+
+EXPOSE 80 23
+
+# Run nginx and socat
+CMD service nginx start && socat TCP-LISTEN:23,fork,reuseaddr SYSTEM:"echo 'Welcome to Debian Telnet'; /bin/bash"

@@ -1,0 +1,24 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update package list and install dependencies
+RUN apt-get update && apt-get install -y \
+    dnsmasq \
+    socat \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure dnsmasq to listen on port 53
+RUN echo "port=53" >> /etc/dnsmasq.conf
+
+# Create a script to run a UDP listener
+# Changed filename to start_udp.sh to force cache invalidation
+RUN echo '#!/bin/bash' > /start_udp.sh && \
+    echo 'dnsmasq -k &' >> /start_udp.sh && \
+    echo 'socat -v UDP-LISTEN:8080,fork EXEC:/bin/cat &' >> /start_udp.sh && \
+    echo 'wait' >> /start_udp.sh && \
+    chmod +x /start_udp.sh
+
+EXPOSE 53/udp 8080/udp
+
+CMD ["/start_udp.sh"]
